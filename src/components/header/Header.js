@@ -1,8 +1,9 @@
 import React, { useState ,useEffect} from "react";
-import {FormControl,Select,MenuItem,Card,CardContent,} from "@material-ui/core";
+import {FormControl,Select,MenuItem} from "@material-ui/core";
+import {sortData} from "../../utils/utils";
 import "./Header.css";
 
-const Header = () => {
+const Header = ({onCountryChange,setTableData}) => {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState('worldwide');
 
@@ -18,19 +19,22 @@ const Header = () => {
                 value:country.countryInfo.iso2
             }
         ));      
-        //console.log(countriesFormat);
-        setCountries(countriesFormat)
+
+        const sortedData=sortData(data)
+        setTableData(sortedData);        
+        setCountries(countriesFormat);
     })
     .catch(error=>console.log(error.message))
     }
-    
+
 
     getCountiesData();
-  },[])
+  },[setTableData])
 
   const handleCountryChange = async (e)=>{
     const countryCode=e.target.value;
-    setCountry(countryCode);    
+    setCountry(countryCode);  
+    onCountryChange(countryCode);
   }
 
   
@@ -41,7 +45,7 @@ const Header = () => {
         <Select variant="outlined" value={country} onChange={(e)=>handleCountryChange(e)}>
         <MenuItem key="worldwide" value="worldwide" >Worldwide</MenuItem>
           {countries.map((country) => (
-            <MenuItem value={country.value} >{country.name}</MenuItem>
+            <MenuItem key={country.value} value={country.value} >{country.name}</MenuItem>
           ))}                  
         </Select>
       </FormControl>
